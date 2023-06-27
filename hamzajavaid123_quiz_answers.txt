@@ -1,0 +1,6 @@
+Which country won the FIFA World Cup in 2018?: C
+Which planet is known as the Red Planet?: B
+What is the largest ocean on Earth?: 
+What is the capital of France?: B
+Who painted the Mona Lisa?: A
+

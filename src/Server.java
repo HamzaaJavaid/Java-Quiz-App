@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Server {
     private static final int PORT = 1234;
-    private static final String USERNAME = "Hamza Javaid";
+    private static  String USERNAME = "Hamza Javaid";
     private static final String PASSWORD = "0767";
     private static final int QUESTION_TIMEOUT_SECONDS = 15;
 
@@ -48,6 +48,8 @@ public class Server {
 
             // Start the quiz
             Quiz quiz = new Quiz();
+            int score = 0;
+
             for (int i = 0; i < generalKnowledgeQuestions.size(); i++) {
                 Question question = generalKnowledgeQuestions.get(i);
                 writer.println("Question " + (i + 1) + ": " + question.getQuestionText());
@@ -55,7 +57,7 @@ public class Server {
 
                 List<String> options = question.getOptions();
                 for (int j = 0; j < options.size(); j++) {
-                    writer.println((char) ('A' + j) + ") " + options.get(j));
+                    writer.println((char) (j) + ") " + options.get(j));
                 }
 
                 QuizTimerTask timerTask = new QuizTimerTask(reader, writer, quiz, question);
@@ -66,21 +68,30 @@ public class Server {
 
                 timer.cancel();
 
-                quiz.addAnswer(question, answer);
+                quiz.addAnswer(question.getQuestionText(), answer);
 
                 String correctAnswer = question.getCorrectAnswer();
                 if (answer.equalsIgnoreCase(correctAnswer)) {
                     writer.println("Your answer is correct!");
+                    score += 1;
                 } else {
                     writer.println("Your answer is incorrect. The correct answer is: " + correctAnswer);
                 }
             }
 
-            // Store the quiz in a separate text file
-            storeQuiz(quiz);
+            // Store the quiz in a separate file with the user's name
+            String fileName = USERNAME.replace(" ", "_") + "_quiz_answers.txt";
+            storeQuiz(quiz, fileName);
 
-            // Send completion message
-            writer.println("Quiz completed. Your answers have been saved. Goodbye!");
+            // Calculate percentage
+            int totalMarks = generalKnowledgeQuestions.size();
+            int obtainedMarks = score;
+            double percentage = (obtainedMarks * 100.0) / totalMarks;
+
+            // Send score and percentage to the user
+            writer.println("Quiz completed. Your answers have been saved.");
+            writer.println("Your Score: " + obtainedMarks + "/" + totalMarks);
+            writer.println("Percentage: " + percentage + "%");
 
             // Close the connection
             socket.close();
@@ -91,18 +102,18 @@ public class Server {
 
     private static boolean performAuthentication(BufferedReader reader, PrintWriter writer) throws IOException {
         writer.println("Please enter your username:");
-        String username = reader.readLine();
-
+        USERNAME = reader.readLine();
         writer.println("Please enter your password:");
         String password = reader.readLine();
 
-        return username.equals(USERNAME) && password.equals(PASSWORD);
+        return  password.equals(PASSWORD);
     }
 
-    private static void storeQuiz(Quiz quiz) {
-        try (PrintWriter writer = new PrintWriter("quiz_answers.txt")) {
+    private static void storeQuiz(Quiz quiz, String fileName) {
+        String fileNamee = USERNAME + "_quiz_answers.txt";
+        try (PrintWriter writer = new PrintWriter(fileNamee)) {
             writer.println(quiz.toString());
-            System.out.println("Quiz answers saved to quiz_answers.txt");
+            System.out.println("Quiz answers saved to " + fileName);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -167,22 +178,21 @@ public class Server {
     }
 
     private static class Quiz {
-        private final Map<Question, String> questionAnswers;
+        private final Map<String, String> questionAnswers;
 
         public Quiz() {
             questionAnswers = new HashMap<>();
         }
 
-        public void addAnswer(Question question, String answer) {
+        public void addAnswer(String question, String answer) {
             questionAnswers.put(question, answer);
         }
 
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            for (Map.Entry<Question, String> entry : questionAnswers.entrySet()) {
-                sb.append(entry.getKey().getQuestionText()).append("\n");
-                sb.append("Answer: ").append(entry.getValue()).append("\n\n");
+            for (Map.Entry<String, String> entry : questionAnswers.entrySet()) {
+                sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
             }
             return sb.toString();
         }
@@ -215,19 +225,20 @@ public class Server {
         public String waitForAnswer() {
             try {
                 long startTime = System.currentTimeMillis();
-                while ((System.currentTimeMillis() - startTime) < TimeUnit.SECONDS.toMillis(QUESTION_TIMEOUT_SECONDS)) {
-                    if (reader.ready()) {
-                        String answer = reader.readLine().trim().toUpperCase();
-                        writer.println("Your answer: " + answer);
+                while (!reader.ready()) {
+                    long currentTime = System.currentTimeMillis();
+                    long elapsedTime = currentTime - startTime;
+                    long remainingTime = TimeUnit.SECONDS.toMillis(QUESTION_TIMEOUT_SECONDS) - elapsedTime;
 
-                        return answer;
+                    if (remainingTime <= 0) {
+                        return "";
                     }
-                    TimeUnit.MILLISECONDS.sleep(100);
                 }
-            } catch (IOException | InterruptedException e) {
+                return reader.readLine().trim();
+            } catch (IOException e) {
                 e.printStackTrace();
+                return "";
             }
-            return "";
         }
     }
 }
