@@ -49,8 +49,8 @@ code.
 6. Follow the prompts to enter the username and password.
 7. Answer the quiz questions within the given time limit.
 
-8 The quiz answers will be saved in a separate file
-(`quiz_answers.txt`).
+8 The quiz answers will be saved in a separate file under same username
+(`Username_quiz_answers.txt`).
 
 _**●Running the Project using Telnet:**_  
 
@@ -68,8 +68,8 @@ establish a connection with the server.
 ![Screenshot 2023-06-26 114023](https://github.com/HamzaaJavaid/Java-Quiz-App/assets/115164085/6de87752-39c9-49e1-b271-7cb74c015770)
 
 ![1](https://github.com/HamzaaJavaid/Java-Quiz-App/assets/115164085/98190d0e-e491-466c-9d1b-1eeff69c3e3d)
+![ss](https://github.com/HamzaaJavaid/Java-Quiz-App/assets/115164085/3dad32fe-84d8-4958-bfed-fc2fcf8e2dab)
+![sss](https://github.com/HamzaaJavaid/Java-Quiz-App/assets/115164085/ec981672-d95f-4692-8fab-278ac5474c4a)
+![sssssss](https://github.com/HamzaaJavaid/Java-Quiz-App/assets/115164085/6dc7504b-7b92-496c-830a-531a0069d2ef)
 
-![2](https://github.com/HamzaaJavaid/Java-Quiz-App/assets/115164085/5ff8f97e-1b14-47f8-8824-51ba0dbdec1a)
-
-![3](https://github.com/HamzaaJavaid/Java-Quiz-App/assets/115164085/cdf9f1af-e703-4cd1-82fd-f39b9cf06147)
 
