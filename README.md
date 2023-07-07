@@ -1,5 +1,5 @@
 **JAVA QUIZ APP**✍
-_Developer :- Hamza Javaid ( 20pwbcs0767)_
+_Developer :- Hamza Javaid ( 20pwbcs0767)_  
 _Mobile App developer| Lead @ CPC  | Speaker_
 
 
